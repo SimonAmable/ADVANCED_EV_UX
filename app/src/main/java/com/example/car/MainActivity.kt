@@ -8,7 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.car.databinding.ActivityMainBinding
 import androidx.fragment.app.Fragment
 
-
+//HELLO
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
@@ -40,8 +40,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
     }
-
-
 
     private fun replaceFragment(fragment : Fragment) {
 
