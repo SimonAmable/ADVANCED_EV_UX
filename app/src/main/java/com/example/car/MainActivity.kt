@@ -24,9 +24,7 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId) {
                 R.id.map -> replaceFragment(Map())
                 R.id.settings -> replaceFragment(Settings())
-
                 R.id.accessories -> replaceFragment(Accessories())
-
                 else -> {
 
                 }

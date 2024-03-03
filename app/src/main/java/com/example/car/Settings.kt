@@ -1,33 +1,22 @@
 package com.example.car
 
+import android.app.DatePickerDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextClock
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Settings.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Settings : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,23 +26,42 @@ class Settings : Fragment() {
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Settings.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Settings().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Get the current local time
+        val calendar = Calendar.getInstance()
+        val timeZone: TimeZone = calendar.timeZone
+
+        val hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute: Int = calendar.get(Calendar.MINUTE)
+
+        // Display the local time
+        val currentTime = String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
+        Log.d("Local Time", "Current local time: $currentTime")
+
+        // Set the local time to TextClock
+        val textClock: TextClock = view.findViewById(R.id.textClock)
+        textClock.text = currentTime
+
+        // Assuming you have a button in your Settings fragment with ID button1
+        val button1: Button = view.findViewById(R.id.button1)
+
+        button1.setOnClickListener {
+            replaceFragment(Bluetooth())
+        }
+
+        val button2: Button = view.findViewById(R.id.button2)
+
+        button2.setOnClickListener {
+            replaceFragment(Charge())
+        }
+    }
+
+    // Add this function to your Settings fragment or in a utility class
+    fun replaceFragment(fragment: Fragment) {
+        val transaction = requireActivity().supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_layout, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }
