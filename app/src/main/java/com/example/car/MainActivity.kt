@@ -19,6 +19,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
@@ -86,8 +88,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style))
         val carletonUniversity = LatLng(45.3875812, -75.6960202)
-        mMap.addMarker(MarkerOptions().position(carletonUniversity).title("Carleton University"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 15f))
+        mMap.addMarker(
+            MarkerOptions()
+                .position(carletonUniversity)
+                .title("Carleton University")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
+        )
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 6f))
     }
 
     private fun replaceFragment(fragment : Fragment) {
