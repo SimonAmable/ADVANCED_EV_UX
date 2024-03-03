@@ -24,27 +24,20 @@ import com.google.android.gms.maps.model.LatLngBounds
 import android.widget.TextView
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
-
 import android.widget.EditText
 import android.widget.Button
-
-
-
-
-
+import android.location.Geocoder
+import java.util.Locale
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Callback
 import okhttp3.Call
 import okhttp3.Response
 import android.graphics.Color
-
 import java.io.IOException
-
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.maps.android.PolyUtil
 import org.json.JSONObject
-
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.android.volley.Request as VolleyRequest
@@ -61,6 +54,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     private lateinit var locationSearch: EditText
     private lateinit var destinationSearch: EditText
     private lateinit var searchButton: Button
+
 
     private fun apiCall(callback: (List<LatLng>) -> Unit) {
         val coordinatesList = mutableListOf<LatLng>()
@@ -87,6 +81,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         )
         queue.add(jsonObjectRequest)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -165,6 +160,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             insets
         }
         searchButton.setOnClickListener {
+            // RESET POLYLINE
+            clearMap()
             locationSearcher()
         }
     }
@@ -174,15 +171,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style))
         val carletonUniversity = LatLng(45.3875812, -75.6960202)
-        mMap.addMarker(
-            MarkerOptions()
-                .position(carletonUniversity)
-                .title("Carleton University")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
-        )
+//        mMap.addMarker(
+//            MarkerOptions()
+//                .position(carletonUniversity)
+//                .title("Carleton University")
+//                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
+//        )
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 6f))
 
-        fetchAndDrawRoute(LatLng(45.3875812, -75.6960202), LatLng(45.423594, -75.700929), "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
+        //fetchAndDrawRoute(LatLng(45.3875812, -75.6960202), LatLng(45.423594, -75.700929), "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
 
         // loads local carging stations from api
         // TODO : connect api to a lightning bolt button
@@ -190,21 +187,118 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             Log.d("singleCord", cordList.toString())
             for (coordinate in cordList) {
                 Log.d("singleCord", coordinate.toString())
-                mMap.addMarker(
-                    MarkerOptions()
-                        .position(coordinate)
-                        .title("Charging Station")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                )
+//                mMap.addMarker(
+//                    MarkerOptions()
+//                        .position(coordinate)
+//                        .title("Charging Station")
+//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+//                )
                 Log.d("MainActivity", "Latitude: ${coordinate.latitude}, Longitude: ${coordinate.longitude}")
             }
         }
-
     }
-
+    private lateinit var locationCoords: LatLng
+    private lateinit var destinationCoords: LatLng
+    private var geocodeOperationsCompleted = 0 // Make it a member variable
 
     private fun locationSearcher() {
+        val locationEditText = findViewById<EditText>(R.id.location)
+        val destinationEditText = findViewById<EditText>(R.id.destination)
 
+        val location = locationEditText.text.toString().trim()
+        val destination = destinationEditText.text.toString().trim()
+
+        if(location.isEmpty() || destination.isEmpty()) {
+            return
+        }
+
+        geocodeOperationsCompleted = 0 // Reset the counter
+
+        // Geocode the starting location
+        geocodeLocation(location) { locationCoordinates ->
+            if (locationCoordinates != null) {
+                locationCoords = locationCoordinates
+
+                runOnUiThread {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(locationCoordinates)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
+                    )
+                }
+
+                geocodeOperationsCompleted++
+                checkAndExecuteRouteDrawing()
+            } else {
+                Log.d("LocationSearcher", "Starting location not found")
+            }
+        }
+        // Geocode the destination
+        geocodeLocation(destination) { destinationCoordinates ->
+            if (destinationCoordinates != null) {
+                destinationCoords = destinationCoordinates
+
+                runOnUiThread {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(destinationCoordinates)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
+                    )
+                }
+
+                geocodeOperationsCompleted++
+                checkAndExecuteRouteDrawing()
+            } else {
+                Log.d("LocationSearcher", "Destination not found")
+            }
+        }
+    }
+
+    private fun checkAndExecuteRouteDrawing() {
+        if (geocodeOperationsCompleted == 2) {
+            runOnUiThread {
+                fetchAndDrawRoute(locationCoords, destinationCoords, "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
+            }
+        }
+    }
+
+    private fun geocodeLocation(location: String, callback: (LatLng?) -> Unit) {
+        val geocodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=$location&key=AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c"
+
+        val client = OkHttpClient()
+        val request = Request.Builder().url(geocodingUrl).build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                e.printStackTrace()
+                callback(null)
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                response.body?.string()?.let { jsonData ->
+
+                    val jsonObject = JSONObject(jsonData)
+                    val results = jsonObject.getJSONArray("results")
+
+                    if (results.length() > 0) {
+                        val locationObject = results.getJSONObject(0)
+                        val geometry = locationObject.getJSONObject("geometry")
+                        val location = geometry.getJSONObject("location")
+
+                        val latitude = location.getDouble("lat")
+                        val longitude = location.getDouble("lng")
+
+                        callback(LatLng(latitude, longitude))
+                    } else {
+                        callback(null)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun getDestinationLatLng(destination: String): LatLng {
+        return LatLng(45.423594, -75.700929)
     }
 
     private fun replaceFragment(fragment : Fragment) {
@@ -244,9 +338,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                             Log.d("Direction Time", durationText)
 
                             runOnUiThread {
-
-
-
                                 val decodedPath = PolyUtil.decode(polyline)
                                 // Add the line from origin to destination
                                 mMap.addPolyline(
@@ -255,7 +346,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                                         .color(Color.YELLOW)
                                         .width(15f)
                                 )
-
                                 // Calculate bounds that include origin and destination
                                 val builder = LatLngBounds.builder()
                                 builder.include(origin)
@@ -284,5 +374,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             }
         })
     }
-
+    fun clearMap() {
+        mMap.clear()
+    }
 }
