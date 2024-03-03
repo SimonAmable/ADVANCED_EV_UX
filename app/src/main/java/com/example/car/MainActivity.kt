@@ -52,6 +52,44 @@ import org.json.JSONArray
 class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private lateinit var binding : ActivityMainBinding
+  
+import android.util.Log
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLngBounds
+import android.widget.TextView
+import android.widget.Button
+import android.graphics.drawable.GradientDrawable
+import androidx.core.content.ContextCompat
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Callback
+import okhttp3.Call
+import okhttp3.Response
+import android.graphics.Color
+import android.widget.EditText
+import java.io.IOException
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.maps.android.PolyUtil
+import org.json.JSONObject
+import android.location.Geocoder
+import java.util.Locale
+
+class MainActivity : AppCompatActivity(), OnMapReadyCallback{
+
+    private lateinit var binding : ActivityMainBinding
+    private lateinit var mMap: GoogleMap
+    private lateinit var directionTimeDisplay: TextView
+    private lateinit var locationSearch: EditText
+    private lateinit var destinationSearch: EditText
+    private lateinit var searchButton: Button
+
     private lateinit var mMap: GoogleMap
     private lateinit var directionTimeDisplay: TextView
 
@@ -82,9 +120,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     }
     override fun onCreate(savedInstanceState: Bundle?) {
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         Log.d("MainActivity", "onCreate RUN")
 
+        Log.d("MainActivity", "onCreate RUN")
 
 
 
@@ -94,9 +136,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
         replaceFragment(Map())
 
+        directionTimeDisplay = findViewById(R.id.directionTimeDisplay)
+        locationSearch = findViewById(R.id.location)
+        destinationSearch = findViewById(R.id.destination)
+        searchButton = findViewById(R.id.searchButton)
+
 
         directionTimeDisplay = findViewById(R.id.directionTimeDisplay)
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.let {
@@ -116,6 +162,37 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId) {
+                R.id.map -> replaceFragment(Map())
+                R.id.settings -> replaceFragment(Settings())
+
+                R.id.accessories -> replaceFragment(Accessories())
+                R.id.map -> {
+                    locationSearch.visibility = View.VISIBLE
+                    destinationSearch.visibility = View.VISIBLE
+                    searchButton.visibility = View.VISIBLE
+                    // Load map fragment
+                    val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+                        ?: SupportMapFragment.newInstance().also {
+                            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, it).commit()
+                        }
+                    mapFragment.getMapAsync(this@MainActivity)
+                    true
+                }
+                R.id.settings -> {
+                    directionTimeDisplay.visibility = View.INVISIBLE
+                    locationSearch.visibility = View.INVISIBLE
+                    destinationSearch.visibility = View.INVISIBLE
+                    searchButton.visibility = View.INVISIBLE
+                    replaceFragment(Settings())
+                }
+
+                R.id.accessories -> {
+                    directionTimeDisplay.visibility = View.INVISIBLE
+                    locationSearch.visibility = View.INVISIBLE
+                    destinationSearch.visibility = View.INVISIBLE
+                    searchButton.visibility = View.INVISIBLE
+                    replaceFragment(Accessories())
+                }
                 R.id.map -> {
                     // Load map fragment
                     val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -147,7 +224,33 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        searchButton.setOnClickListener {
+            locationSearcher()
+        }
     }
+
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style))
+        val carletonUniversity = LatLng(45.3875812, -75.6960202)
+        mMap.addMarker(
+            MarkerOptions()
+                .position(carletonUniversity)
+                .title("Carleton University")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
+        )
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 6f))
+
+        fetchAndDrawRoute(LatLng(45.3875812, -75.6960202), LatLng(45.423594, -75.700929), "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
+    }
+
+    private fun locationSearcher() {
+        
+    }
+
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -182,12 +285,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
     }
 
+
     private fun replaceFragment(fragment : Fragment) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout, fragment)
         fragmentTransaction.commit()
     }
+
 
     private fun fetchAndDrawRoute(origin: LatLng, destination: LatLng, apiKey: String) {
         val client = OkHttpClient()
@@ -219,8 +324,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                             Log.d("Direction Time", durationText)
 
                             runOnUiThread {
-
-
 
                                 val decodedPath = PolyUtil.decode(polyline)
                                 // Add the line from origin to destination
