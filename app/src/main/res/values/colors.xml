@@ -3,5 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#404042</color>
-    <color name="accent">#471bfa</color>
+    <color name="navbar">#404042</color>
+    <color name="icons">#b5b5b3</color>
+    <color name="accent">#009DFF</color>
+
 </resources>
