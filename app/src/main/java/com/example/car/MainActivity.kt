@@ -20,6 +20,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLngBounds
+import android.widget.TextView
+import android.graphics.drawable.GradientDrawable
+import androidx.core.content.ContextCompat
+
+
+
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -40,17 +47,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private lateinit var binding : ActivityMainBinding
     private lateinit var mMap: GoogleMap
+    private lateinit var directionTimeDisplay: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         Log.d("MainActivity", "onCreate RUN")
 
+
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
 
         replaceFragment(Map())
+
+
+        directionTimeDisplay = findViewById(R.id.directionTimeDisplay)
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.let {
@@ -79,9 +95,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                     mapFragment.getMapAsync(this@MainActivity)
                     true
                 }
-                R.id.settings -> replaceFragment(Settings())
+                R.id.settings -> {
+                    directionTimeDisplay.visibility = View.INVISIBLE
+                    replaceFragment(Settings())
+                }
 
-                R.id.accessories -> replaceFragment(Accessories())
+                R.id.accessories -> {
+                    directionTimeDisplay.visibility = View.INVISIBLE
+                    replaceFragment(Accessories())
+                }
 
                 else -> {
 
@@ -131,7 +153,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         val request = Request.Builder().url(url).build()
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                e.printStackTrace() // Handle failure
+                e.printStackTrace()
             }
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
@@ -140,17 +162,51 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                     val routes = jsonObject.getJSONArray("routes")
                     if (routes.length() > 0) {
                         val route = routes.getJSONObject(0)
+                        val legs = route.getJSONArray("legs")
                         val overviewPolyline = route.getJSONObject("overview_polyline")
                         val polyline = overviewPolyline.getString("points")
 
-                        runOnUiThread {
-                            val decodedPath = PolyUtil.decode(polyline)
-                            mMap.addPolyline(
-                                PolylineOptions()
-                                    .addAll(decodedPath)
-                                    .color(Color.YELLOW)
-                                    .width(15f)
-                            )
+                        if (legs.length() > 0) {
+                            val leg = legs.getJSONObject(0)
+                            val durationObject = leg.getJSONObject("duration")
+                            val durationText = durationObject.getString("text")
+                            Log.d("Direction Time", durationText)
+
+                            runOnUiThread {
+
+
+
+                                val decodedPath = PolyUtil.decode(polyline)
+                                // Add the line from origin to destination
+                                mMap.addPolyline(
+                                    PolylineOptions()
+                                        .addAll(decodedPath)
+                                        .color(Color.YELLOW)
+                                        .width(15f)
+                                )
+
+                                // Calculate bounds that include origin and destination
+                                val builder = LatLngBounds.builder()
+                                builder.include(origin)
+                                builder.include(destination)
+                                decodedPath.forEach { point -> builder.include(point) }
+                                val bounds = builder.build()
+
+                                // Move camera to show the route
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 350))
+
+                                // Display the direction time box
+                                val drawable = GradientDrawable().apply {
+                                    setColor(ContextCompat.getColor(this@MainActivity, R.color.background))
+                                    cornerRadius = 20f
+                                    setStroke(8, ContextCompat.getColor(this@MainActivity, R.color.white))
+                                }
+
+                                // Apply the drawable as the TextView background
+                                directionTimeDisplay.background = drawable
+                                directionTimeDisplay.text = "$durationText"
+                                directionTimeDisplay.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }
