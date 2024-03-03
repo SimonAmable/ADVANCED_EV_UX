@@ -11,12 +11,48 @@ import android.os.Build
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-<<<<<<< Updated upstream
+import android.util.Log
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLngBounds
+import android.widget.TextView
+import android.graphics.drawable.GradientDrawable
+import androidx.core.content.ContextCompat
 
-class MainActivity : AppCompatActivity() {
+
+
+
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Callback
+import okhttp3.Call
+import okhttp3.Response
+import android.graphics.Color
+
+import java.io.IOException
+
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.maps.android.PolyUtil
+import org.json.JSONObject
+
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import com.android.volley.Request as VolleyRequest
+import com.android.volley.Response as VolleyResponse
+
+import org.json.JSONArray
+
+
+class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private lateinit var binding : ActivityMainBinding
-=======
+  
 import android.util.Log
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -53,30 +89,61 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     private lateinit var locationSearch: EditText
     private lateinit var destinationSearch: EditText
     private lateinit var searchButton: Button
->>>>>>> Stashed changes
+
+    private lateinit var mMap: GoogleMap
+    private lateinit var directionTimeDisplay: TextView
+
+    private fun apiCall(callback: (List<LatLng>) -> Unit) {
+        val coordinatesList = mutableListOf<LatLng>()
+        val url =
+            "https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?api_key=DEMO_KEY&location=K1S5B6&fuel_type=ELEC&limit=100&radius=400"
+        val queue = Volley.newRequestQueue(this)
+        val jsonObjectRequest = JsonObjectRequest(
+            VolleyRequest.Method.GET, url, null,
+            VolleyResponse.Listener { response ->
+                Log.d("MainActivity", "Api call success")
+                val jsonOBJ = JSONObject(response.toString())
+                val jsonFuelArr = jsonOBJ.getJSONArray("fuel_stations")
+                for (i in 0 until jsonFuelArr.length()) {
+                    val singleFuelStation = jsonFuelArr.getJSONObject(i)
+                    val latitude = singleFuelStation.getDouble("latitude")
+                    val longitude = singleFuelStation.getDouble("longitude")
+                    coordinatesList.add(LatLng(latitude, longitude))
+                }
+                callback(coordinatesList)
+            }, VolleyResponse.ErrorListener {
+                Log.d("MainActivity", "Api call failure")
+                callback(emptyList()) // Handle error case
+            }
+        )
+        queue.add(jsonObjectRequest)
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-<<<<<<< Updated upstream
-=======
+
         Log.d("MainActivity", "onCreate RUN")
 
->>>>>>> Stashed changes
+        Log.d("MainActivity", "onCreate RUN")
+
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
 
         replaceFragment(Map())
 
-<<<<<<< Updated upstream
-=======
         directionTimeDisplay = findViewById(R.id.directionTimeDisplay)
         locationSearch = findViewById(R.id.location)
         destinationSearch = findViewById(R.id.destination)
         searchButton = findViewById(R.id.searchButton)
 
 
->>>>>>> Stashed changes
+        directionTimeDisplay = findViewById(R.id.directionTimeDisplay)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.let {
                 it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
@@ -95,12 +162,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId) {
-<<<<<<< Updated upstream
                 R.id.map -> replaceFragment(Map())
                 R.id.settings -> replaceFragment(Settings())
 
                 R.id.accessories -> replaceFragment(Accessories())
-=======
                 R.id.map -> {
                     locationSearch.visibility = View.VISIBLE
                     destinationSearch.visibility = View.VISIBLE
@@ -128,7 +193,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                     searchButton.visibility = View.INVISIBLE
                     replaceFragment(Accessories())
                 }
->>>>>>> Stashed changes
+                R.id.map -> {
+                    // Load map fragment
+                    val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+                        ?: SupportMapFragment.newInstance().also {
+                            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, it).commit()
+                        }
+                    mapFragment.getMapAsync(this@MainActivity)
+                    true
+                }
+                R.id.settings -> {
+                    directionTimeDisplay.visibility = View.INVISIBLE
+                    replaceFragment(Settings())
+                }
+
+                R.id.accessories -> {
+                    directionTimeDisplay.visibility = View.INVISIBLE
+                    replaceFragment(Accessories())
+                }
 
                 else -> {
 
@@ -148,8 +230,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         }
     }
 
-<<<<<<< Updated upstream
-=======
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
@@ -171,15 +252,47 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     }
 
 
->>>>>>> Stashed changes
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style))
+        val carletonUniversity = LatLng(45.3875812, -75.6960202)
+        mMap.addMarker(
+            MarkerOptions()
+                .position(carletonUniversity)
+                .title("Carleton University")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
+        )
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 6f))
+
+        fetchAndDrawRoute(LatLng(45.3875812, -75.6960202), LatLng(45.423594, -75.700929), "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
+
+        // loads local carging stations from api
+        // TODO : connect api to a lightning bolt button
+        apiCall { cordList ->
+            Log.d("singleCord", cordList.toString())
+            for (coordinate in cordList) {
+                Log.d("singleCord", coordinate.toString())
+                mMap.addMarker(
+                    MarkerOptions()
+                        .position(coordinate)
+                        .title("Charging Station")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                )
+                Log.d("MainActivity", "Latitude: ${coordinate.latitude}, Longitude: ${coordinate.longitude}")
+            }
+        }
+
+    }
+
+
     private fun replaceFragment(fragment : Fragment) {
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout, fragment)
         fragmentTransaction.commit()
     }
-<<<<<<< Updated upstream
-=======
+
 
     private fun fetchAndDrawRoute(origin: LatLng, destination: LatLng, apiKey: String) {
         val client = OkHttpClient()
@@ -249,5 +362,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             }
         })
     }
->>>>>>> Stashed changes
+
 }
