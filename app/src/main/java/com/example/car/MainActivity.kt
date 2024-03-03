@@ -21,6 +21,20 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Callback
+import okhttp3.Call
+import okhttp3.Response
+import android.graphics.Color
+
+import java.io.IOException
+
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.maps.android.PolyUtil
+import org.json.JSONObject
+
+
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
@@ -95,6 +109,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)) // Set marker color to blue
         )
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 6f))
+
+        fetchAndDrawRoute(LatLng(45.3875812, -75.6960202), LatLng(45.423594, -75.700929), "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
+
     }
 
     private fun replaceFragment(fragment : Fragment) {
@@ -103,4 +120,42 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         fragmentTransaction.replace(R.id.frame_layout, fragment)
         fragmentTransaction.commit()
     }
+
+    private fun fetchAndDrawRoute(origin: LatLng, destination: LatLng, apiKey: String) {
+        val client = OkHttpClient()
+        val url = "https://maps.googleapis.com/maps/api/directions/json?" +
+                "origin=${origin.latitude},${origin.longitude}&" +
+                "destination=${destination.latitude},${destination.longitude}&" +
+                "key=$apiKey"
+
+        val request = Request.Builder().url(url).build()
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                e.printStackTrace() // Handle failure
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                response.body?.string()?.let { jsonData ->
+                    val jsonObject = JSONObject(jsonData)
+                    val routes = jsonObject.getJSONArray("routes")
+                    if (routes.length() > 0) {
+                        val route = routes.getJSONObject(0)
+                        val overviewPolyline = route.getJSONObject("overview_polyline")
+                        val polyline = overviewPolyline.getString("points")
+
+                        runOnUiThread {
+                            val decodedPath = PolyUtil.decode(polyline)
+                            mMap.addPolyline(
+                                PolylineOptions()
+                                    .addAll(decodedPath)
+                                    .color(Color.YELLOW)
+                                    .width(15f)
+                            )
+                        }
+                    }
+                }
+            }
+        })
+    }
+
 }
