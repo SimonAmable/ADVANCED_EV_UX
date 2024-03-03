@@ -25,6 +25,10 @@ import android.widget.TextView
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
 
+import android.widget.EditText
+import android.widget.Button
+
+
 
 
 
@@ -54,6 +58,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     private lateinit var binding : ActivityMainBinding
     private lateinit var mMap: GoogleMap
     private lateinit var directionTimeDisplay: TextView
+    private lateinit var locationSearch: EditText
+    private lateinit var destinationSearch: EditText
+    private lateinit var searchButton: Button
 
     private fun apiCall(callback: (List<LatLng>) -> Unit) {
         val coordinatesList = mutableListOf<LatLng>()
@@ -86,8 +93,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         Log.d("MainActivity", "onCreate RUN")
 
 
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -96,6 +101,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
 
         directionTimeDisplay = findViewById(R.id.directionTimeDisplay)
+        locationSearch = findViewById(R.id.location)
+        destinationSearch = findViewById(R.id.destination)
+        searchButton = findViewById(R.id.searchButton)
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -117,6 +125,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId) {
                 R.id.map -> {
+                    locationSearch.visibility = View.VISIBLE
+                    destinationSearch.visibility = View.VISIBLE
+                    searchButton.visibility = View.VISIBLE
                     // Load map fragment
                     val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
                         ?: SupportMapFragment.newInstance().also {
@@ -127,11 +138,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                 }
                 R.id.settings -> {
                     directionTimeDisplay.visibility = View.INVISIBLE
+                    locationSearch.visibility = View.INVISIBLE
+                    destinationSearch.visibility = View.INVISIBLE
+                    searchButton.visibility = View.INVISIBLE
                     replaceFragment(Settings())
                 }
 
                 R.id.accessories -> {
                     directionTimeDisplay.visibility = View.INVISIBLE
+                    locationSearch.visibility = View.INVISIBLE
+                    destinationSearch.visibility = View.INVISIBLE
+                    searchButton.visibility = View.INVISIBLE
                     replaceFragment(Accessories())
                 }
 
@@ -146,6 +163,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        searchButton.setOnClickListener {
+            locationSearcher()
         }
     }
 
@@ -179,6 +199,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                 Log.d("MainActivity", "Latitude: ${coordinate.latitude}, Longitude: ${coordinate.longitude}")
             }
         }
+
+    }
+
+
+    private fun locationSearcher() {
 
     }
 
