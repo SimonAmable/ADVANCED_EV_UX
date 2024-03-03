@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <!--    Box to display the directions time text  -->
 
 
@@ -23,10 +24,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0">
-
-        </FrameLayout>
-
+            app:layout_constraintVertical_bias="1.0"></FrameLayout>
 
         <TextView
             android:id="@+id/directionTimeDisplay"
@@ -80,13 +78,25 @@
 
         <Button
             android:id="@+id/searchButton"
-            android:layout_width="45dp"
-            android:layout_height="47dp"
+            android:layout_width="38dp"
+            android:layout_height="32dp"
             android:layout_marginTop="48dp"
+            android:background="@drawable/transparent_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.855"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/searchButtonIcon"
+            android:layout_width="32dp"
+            android:layout_height="17dp"
+            android:src="@drawable/svg_edited"
+            android:background="#00FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/searchButton"
+            app:layout_constraintEnd_toEndOf="@+id/searchButton"
+            app:layout_constraintStart_toStartOf="@+id/searchButton"
+            app:layout_constraintTop_toTopOf="@+id/searchButton" />
 
         <EditText
             android:id="@+id/location"
@@ -96,6 +106,8 @@
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold"
+            android:backgroundTint="@android:color/white"
+            android:textColorHint="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -109,6 +121,8 @@
             android:textColor="@color/white"
             android:textSize="20dp"
             android:textStyle="bold"
+            android:backgroundTint="@android:color/white"
+            android:textColorHint="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/location" />
