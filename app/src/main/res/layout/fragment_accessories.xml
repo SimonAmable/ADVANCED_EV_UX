@@ -1,18 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
     tools:context=".Accessories">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Accessories Fragment"
-        android:textSize="26dp"
-        android:textColor="@color/white"
-        android:layout_gravity="center"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="ExtraText">
+
+        <!-- OPEN/LOCK DOOR BUTTON -->
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="124dp"
+            android:layout_height="91dp"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/transparent_button"
+            android:backgroundTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.153"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/iconImageView"
+            android:layout_width="64dp"
+            android:layout_height="52dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/lock"
+            app:layout_constraintBottom_toBottomOf="@+id/button1"
+            app:layout_constraintEnd_toEndOf="@+id/button1"
+            app:layout_constraintHorizontal_bias="0.516"
+            app:layout_constraintStart_toStartOf="@+id/button1" />
+        <!-- //////////////////////////////////////////////////// -->
+
+        <!-- OPEN/CLOSE TRUNK BUTTON -->
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="124dp"
+            android:layout_height="91dp"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/transparent_button"
+            android:backgroundTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.853"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/openTrunkIcon"
+            android:layout_width="81dp"
+            android:layout_height="81dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/open_trunk"
+            app:layout_constraintBottom_toBottomOf="@+id/button2"
+            app:layout_constraintEnd_toEndOf="@+id/button2"
+            app:layout_constraintHorizontal_bias="0.418"
+            app:layout_constraintStart_toStartOf="@+id/button2" />
+        <!-- //////////////////////////////////////////////////// -->
+
+        <!-- HEAT SEAT BUTTON -->
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="124dp"
+            android:layout_height="91dp"
+            android:layout_marginTop="240dp"
+            android:background="@drawable/transparent_button"
+            android:backgroundTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.153"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/heatSeatIcon"
+            android:layout_width="71dp"
+            android:layout_height="73dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/seat"
+            app:layout_constraintBottom_toBottomOf="@+id/button3"
+            app:layout_constraintEnd_toEndOf="@+id/button3"
+            app:layout_constraintHorizontal_bias="0.528"
+            app:layout_constraintStart_toStartOf="@+id/button3" />
+        <!-- //////////////////////////////////////////////////// -->
+
+        <!-- OPEN/LOCK HOOD BUTTON -->
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="124dp"
+            android:layout_height="91dp"
+            android:layout_marginTop="240dp"
+            android:background="@drawable/transparent_button"
+            android:backgroundTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.853"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- //////////////////////////////////////////////////// -->
+
+        <ImageView
+            android:id="@+id/ff"
+            android:layout_width="97dp"
+            android:layout_height="72dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/open_hood"
+            app:layout_constraintBottom_toBottomOf="@+id/button4"
+            app:layout_constraintEnd_toEndOf="@+id/button4"
+            app:layout_constraintHorizontal_bias="0.407"
+            app:layout_constraintStart_toStartOf="@+id/button4" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="CONTROLS"
+            android:textColor="@color/white"
+            android:textSize="26dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
