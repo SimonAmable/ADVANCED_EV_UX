@@ -41,6 +41,12 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.maps.android.PolyUtil
 import org.json.JSONObject
 
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import com.android.volley.Request as VolleyRequest
+import com.android.volley.Response as VolleyResponse
+
+import org.json.JSONArray
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback{
@@ -49,7 +55,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
     private lateinit var mMap: GoogleMap
     private lateinit var directionTimeDisplay: TextView
 
-
+    private fun apiCall(callback: (List<LatLng>) -> Unit) {
+        val coordinatesList = mutableListOf<LatLng>()
+        val url =
+            "https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?api_key=DEMO_KEY&location=K1S5B6&fuel_type=ELEC&limit=100&radius=400"
+        val queue = Volley.newRequestQueue(this)
+        val jsonObjectRequest = JsonObjectRequest(
+            VolleyRequest.Method.GET, url, null,
+            VolleyResponse.Listener { response ->
+                Log.d("MainActivity", "Api call success")
+                val jsonOBJ = JSONObject(response.toString())
+                val jsonFuelArr = jsonOBJ.getJSONArray("fuel_stations")
+                for (i in 0 until jsonFuelArr.length()) {
+                    val singleFuelStation = jsonFuelArr.getJSONObject(i)
+                    val latitude = singleFuelStation.getDouble("latitude")
+                    val longitude = singleFuelStation.getDouble("longitude")
+                    coordinatesList.add(LatLng(latitude, longitude))
+                }
+                callback(coordinatesList)
+            }, VolleyResponse.ErrorListener {
+                Log.d("MainActivity", "Api call failure")
+                callback(emptyList()) // Handle error case
+            }
+        )
+        queue.add(jsonObjectRequest)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -133,6 +163,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 6f))
 
         fetchAndDrawRoute(LatLng(45.3875812, -75.6960202), LatLng(45.423594, -75.700929), "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
+
+        // loads local carging stations from api
+        // TODO : connect api to a lightning bolt button
+        apiCall { cordList ->
+            Log.d("singleCord", cordList.toString())
+            for (coordinate in cordList) {
+                Log.d("singleCord", coordinate.toString())
+                mMap.addMarker(
+                    MarkerOptions()
+                        .position(coordinate)
+                        .title("Charging Station")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                )
+                Log.d("MainActivity", "Latitude: ${coordinate.latitude}, Longitude: ${coordinate.longitude}")
+            }
+        }
 
     }
 
