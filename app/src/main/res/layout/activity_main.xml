@@ -24,6 +24,14 @@
 
         </FrameLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"
@@ -41,8 +49,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_nav"
 
-            >
 
-        </com.google.android.material.bottomnavigation.BottomNavigationView>
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
