@@ -8,7 +8,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.car.databinding.ActivityMainBinding
 import androidx.fragment.app.Fragment
 
-//HELLO
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
@@ -42,12 +41,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment : Fragment) {
-
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_layout, fragment)
         fragmentTransaction.commit()
-
     }
-
 }
