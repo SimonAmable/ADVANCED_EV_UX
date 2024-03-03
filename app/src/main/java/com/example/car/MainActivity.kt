@@ -11,14 +11,25 @@ import android.os.Build
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.util.Log
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.MapStyleOptions
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private lateinit var binding : ActivityMainBinding
+    private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        Log.d("MainActivity", "onCreate RUN")
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -43,7 +54,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.map -> replaceFragment(Map())
+                R.id.map -> {
+                    // Load map fragment
+                    val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+                        ?: SupportMapFragment.newInstance().also {
+                            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, it).commit()
+                        }
+                    mapFragment.getMapAsync(this@MainActivity)
+                    true
+                }
                 R.id.settings -> replaceFragment(Settings())
 
                 R.id.accessories -> replaceFragment(Accessories())
@@ -60,6 +79,15 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style))
+        val carletonUniversity = LatLng(45.3875812, -75.6960202)
+        mMap.addMarker(MarkerOptions().position(carletonUniversity).title("Carleton University"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 15f))
     }
 
     private fun replaceFragment(fragment : Fragment) {
