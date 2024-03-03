@@ -24,30 +24,30 @@ import com.google.android.gms.maps.model.LatLngBounds
 import android.widget.TextView
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
+<<<<<<< Updated upstream
 
 
 
 
+=======
+import android.widget.EditText
+import android.widget.Button
+>>>>>>> Stashed changes
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Callback
 import okhttp3.Call
 import okhttp3.Response
 import android.graphics.Color
-
 import java.io.IOException
-
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.maps.android.PolyUtil
 import org.json.JSONObject
-
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.android.volley.Request as VolleyRequest
 import com.android.volley.Response as VolleyResponse
-
 import org.json.JSONArray
-
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
@@ -285,6 +285,68 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
     }
 
+<<<<<<< Updated upstream
+=======
+    private fun locationSearcher() {
+        val locationEditText = findViewById<EditText>(R.id.location)
+        val destinationEditText = findViewById<EditText>(R.id.destination)
+
+        val location = locationEditText.text.toString().trim()
+        val destination = destinationEditText.text.toString().trim()
+
+        // Geocode user input to get coordinates
+        geocodeLocation(location) { locationCoordinates ->
+            if (locationCoordinates != null) {
+                // Coordinates for the location found, call fetchAndDrawRoute
+                fetchAndDrawRoute(locationCoordinates, getDestinationLatLng(destination), "AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c")
+            } else {
+                // Handle error, location not found
+                Log.d("LocationSearcher", "Location not found")
+            }
+        }
+    }
+
+    private fun geocodeLocation(location: String, callback: (LatLng?) -> Unit) {
+        val geocodingUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=$location&key=AIzaSyA8ittymWIkgh_6jVb3aDCTUcK25DN6m7c"
+
+        val client = OkHttpClient()
+        val request = Request.Builder().url(geocodingUrl).build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                e.printStackTrace()
+                callback(null)
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                response.body?.string()?.let { jsonData ->
+                    val jsonObject = JSONObject(jsonData)
+                    val results = jsonObject.getJSONArray("results")
+
+                    if (results.length() > 0) {
+                        val locationObject = results.getJSONObject(0)
+                        val geometry = locationObject.getJSONObject("geometry")
+                        val location = geometry.getJSONObject("location")
+
+                        val latitude = location.getDouble("lat")
+                        val longitude = location.getDouble("lng")
+
+                        callback(LatLng(latitude, longitude))
+                    } else {
+                        callback(null)
+                    }
+                }
+            }
+        })
+    }
+
+    private fun getDestinationLatLng(destination: String): LatLng {
+        // You can implement a similar function to geocode the destination if needed
+        // For simplicity, you can return a predefined destination LatLng for now
+        return LatLng(45.423594, -75.700929)
+    }
+
+>>>>>>> Stashed changes
 
     private fun replaceFragment(fragment : Fragment) {
         val fragmentManager = supportFragmentManager
