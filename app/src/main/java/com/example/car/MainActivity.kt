@@ -131,11 +131,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId) {
-
-                R.id.map -> replaceFragment(Map())
-                R.id.settings -> replaceFragment(Settings())
-                R.id.accessories -> replaceFragment(Accessories())
-
                 R.id.map -> {
                     locationSearch.visibility = View.VISIBLE
                     destinationSearch.visibility = View.VISIBLE
@@ -163,7 +158,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback{
                     searchButton.visibility = View.INVISIBLE
                     replaceFragment(Accessories())
                 }
-
 
                 else -> {
 
