@@ -12,14 +12,27 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.util.Log
+import com.google.android.gms.maps.model.LatLng
+import android.location.Location
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import androidx.core.app.ActivityCompat
+import android.Manifest
+import android.content.pm.PackageManager
+
+
+
+
 
 class MainActivity : AppCompatActivity(){
 
     private lateinit var binding : ActivityMainBinding
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         replaceFragment(Maps())
 
         binding = ActivityMainBinding.inflate(layoutInflater)

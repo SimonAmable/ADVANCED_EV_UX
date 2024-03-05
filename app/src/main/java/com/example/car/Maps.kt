@@ -27,7 +27,30 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.io.IOException
+import com.android.volley.toolbox.JsonObjectRequest
 import com.example.car.databinding.FragmentMapsBinding
+import com.android.volley.toolbox.Volley
+import com.android.volley.Request as VolleyRequest
+import com.android.volley.Response as VolleyResponse
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import com.google.android.gms.location.FusedLocationProviderClient
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import android.location.Location
+import android.widget.Toast
+import com.google.android.gms.location.LocationServices
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Maps : Fragment(), OnMapReadyCallback {
@@ -45,6 +68,15 @@ class Maps : Fragment(), OnMapReadyCallback {
     private lateinit var destinationCoords: LatLng
     private var geocodeOperationsCompleted = 0
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+
+    private var defaultRadius = 5
+    private var defaultLimit = 30
+    private var defaultLongitude = -75.6960
+    private var defaultLatitude = 45.3876
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,6 +86,34 @@ class Maps : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    private fun getNearbyChargeStations(callback: (List<LatLng>) -> Unit) {
+
+            val coordinatesList = mutableListOf<LatLng>()
+            val url =
+                "https://developer.nrel.gov/api/alt-fuel-stations/v1/nearest.json?api_key=Oyedfyv5EFGYpERGMRJhp8gIDTop6n5GMBrVj4lI&longitude=${defaultLongitude}&latitude=${defaultLatitude}&fuel_type=ELEC&limit=${defaultLimit}&radius=${defaultRadius}&country=CA"
+            val queue = Volley.newRequestQueue(requireContext())
+            val jsonObjectRequest = JsonObjectRequest(
+                VolleyRequest.Method.GET, url, null,
+                { response ->
+                    Log.d("MainActivity", "Api call success")
+                    val jsonOBJ = JSONObject(response.toString())
+                    val jsonFuelArr = jsonOBJ.getJSONArray("fuel_stations")
+                    for (i in 0 until jsonFuelArr.length()) {
+                        val singleFuelStation = jsonFuelArr.getJSONObject(i)
+                        val latitude = singleFuelStation.getDouble("latitude")
+                        val longitude = singleFuelStation.getDouble("longitude")
+                        coordinatesList.add(LatLng(latitude, longitude))
+                    }
+                    Log.d("ELEC CHARGING LIST", "$coordinatesList")
+                    callback(coordinatesList)
+                }, {
+                    Log.d("MainActivity", "Api call failure")
+                    callback(emptyList()) // Handle error case
+                }
+            )
+            queue.add(jsonObjectRequest)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -61,10 +121,30 @@ class Maps : Fragment(), OnMapReadyCallback {
         locationSearch = binding.location
         destinationSearch = binding.destination
         searchButton = binding.searchButton
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
+
+
+        val inflater = LayoutInflater.from(context)
+        val customMarkerView = inflater.inflate(R.layout.map_custom_marker, null)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        getNearbyChargeStations { cordList ->
+            Log.d("singleCord", cordList.toString())
+            for (coordinate in cordList) {
+                Log.d("singleCord", coordinate.toString())
+                mMap.addMarker(
+                    MarkerOptions()
+                        .position(coordinate)
+                        .title("Charging Station")
+                        .icon(BitmapDescriptorFactory.fromBitmap(createBitmapFromView(customMarkerView)))
+                )
+                Log.d("MainActivity", "Latitude: ${coordinate.latitude}, Longitude: ${coordinate.longitude}")
+                // move camera to see ev stations in specified radius from locaiton
+            }
+        }
 
         binding.searchButton.setOnClickListener {
             // RESET POLYLINE
@@ -89,6 +169,17 @@ class Maps : Fragment(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carletonUniversity, 14f))
 
     }
+
+    private fun createBitmapFromView(view: View): Bitmap {
+        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
+        val bitmap = Bitmap.createBitmap(view.measuredWidth, view.measuredHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
+
+
 
     private fun locationSearcher() {
         val locationEditText = binding.location
