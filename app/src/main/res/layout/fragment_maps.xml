@@ -65,6 +65,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Search For charging stations button -->
+        <ImageButton
+            android:id="@+id/searchChargeButton"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="150dp"
+            android:background="@drawable/charge_button_bg"
+            android:src="@drawable/electric_bolt"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.915"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <!-- Search Boxes -->
         <EditText
             android:id="@+id/location"
