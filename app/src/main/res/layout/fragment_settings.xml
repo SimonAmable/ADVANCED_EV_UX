@@ -23,178 +23,222 @@
 
 
         <!-- Button 1 with ImageButton -->
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageButton
-                android:id="@+id/imageButton1"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@color/transparent"
-                android:src="@drawable/bluetooth" />
 
-            <Button
-                android:id="@+id/button1"
+
+
+            <FrameLayout
+                android:id="@+id/frameBluetooth"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
+                android:background="@drawable/search_design"
                 android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@id/imageButton1"
-                android:background="#00FFFFFF"
+                android:layout_centerHorizontal="true"
+                >
+                <ImageButton
+                    android:id="@+id/bluetoothImage"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@null"
+                    app:tint="@color/white"
+                    android:src="@drawable/bluetooth" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button1"
+                android:paddingLeft="70dp"
+                android:layout_width="300dp"
+                android:layout_height="60dp"
+                android:background="@drawable/search_design"
                 android:textColor="@color/white"
                 android:fontFamily="sans-serif-light"
                 android:text="BLUETOOTH"
                 android:textAlignment="textStart"
                 android:textSize="20dp" />
+            </FrameLayout>
         </RelativeLayout>
 
-        <!-- Repeat the above pattern for Button 2 and Button 3 -->
 
-        <!-- Button 2 with ImageButton -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent">
-
-            <ImageButton
-                android:id="@+id/imageButton2"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@color/transparent"
-                android:src="@drawable/charge"/>
-
-            <Button
-                android:id="@+id/button2"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:id="@+id/frameCharge"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
+                android:background="@drawable/search_design"
                 android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@id/imageButton2"
-                android:background="#00FFFFFF"
-                android:fontFamily="sans-serif-light"
-                android:text="CHARGE"
-                android:textColor="@color/white"
-                android:textAlignment="textStart"
-                android:textSize="20dp" />
+                android:layout_centerHorizontal="true"
+                >
+                <ImageButton
+                    android:id="@+id/imageButton2"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@null"
+                    app:tint="@color/white"
+                    android:src="@drawable/charge" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button2"
+                    android:paddingLeft="70dp"
+                    android:layout_width="300dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/search_design"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif-light"
+                    android:text="CHARGE"
+                    android:textAlignment="textStart"
+                    android:textSize="20dp" />
+            </FrameLayout>
         </RelativeLayout>
 
         <!-- Button 3 with ImageButton -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/imageButton3"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@color/transparent"
-                android:src="@drawable/display" />
-
-            <Button
-                android:id="@+id/button3"
+            <FrameLayout
+                android:id="@+id/frameDisplay"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
+                android:background="@drawable/search_design"
                 android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@id/imageButton3"
-                android:background="#00FFFFFF"
-                android:fontFamily="sans-serif-light"
-                android:text="DISPLAY"
-                android:textColor="@color/white"
-                android:textAlignment="textStart"
-                android:textSize="20dp" />
+                android:layout_centerHorizontal="true"
+                >
+                <ImageButton
+                    android:id="@+id/imageButton3"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@null"
+                    app:tint="@color/white"
+                    android:src="@drawable/display" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button3"
+                    android:paddingLeft="70dp"
+                    android:layout_width="300dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/search_design"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif-light"
+                    android:text="DISPLAY"
+                    android:textAlignment="textStart"
+                    android:textSize="20dp" />
+            </FrameLayout>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/imageButton4"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@color/transparent"
-                android:src="@drawable/information" />
-
-            <Button
-                android:id="@+id/button4"
+            <FrameLayout
+                android:id="@+id/frameInformation"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
+                android:background="@drawable/search_design"
                 android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@id/imageButton4"
-                android:background="#00FFFFFF"
-                android:fontFamily="sans-serif-light"
-                android:textColor="@color/white"
-                android:text="CAR INFORMATION"
-                android:textAlignment="textStart"
-                android:textSize="20dp" />
+                android:layout_centerHorizontal="true"
+                >
+                <ImageButton
+                    android:id="@+id/imageButton4"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@null"
+                    app:tint="@color/white"
+                    android:src="@drawable/information" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button4"
+                    android:paddingLeft="70dp"
+                    android:layout_width="300dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/search_design"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif-light"
+                    android:text="CAR INFORMATION"
+                    android:textAlignment="textStart"
+                    android:textSize="20dp" />
+            </FrameLayout>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/imageButton5"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@color/transparent"
-                android:src="@drawable/maintanence" />
-
-
-            <Button
-                android:id="@+id/button5"
+            <FrameLayout
+                android:id="@+id/frameMaintenance"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
+                android:background="@drawable/search_design"
                 android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@id/imageButton5"
-                android:background="#00FFFFFF"
-                android:fontFamily="sans-serif-light"
-                android:text="MAINTENANCE"
-                android:textColor="@color/white"
-                android:textAlignment="textStart"
-                android:textSize="20dp" />
+                android:layout_centerHorizontal="true"
+                >
+                <ImageButton
+                    android:id="@+id/imageButton5"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@null"
+                    app:tint="@color/white"
+                    android:src="@drawable/maintanence" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button5"
+                    android:paddingLeft="70dp"
+                    android:layout_width="300dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/search_design"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif-light"
+                    android:text="MAINTENANCE"
+                    android:textAlignment="textStart"
+                    android:textSize="20dp" />
+            </FrameLayout>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <ImageButton
-                android:id="@+id/imageButton6"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@color/transparent"
-                android:src="@drawable/energy" />
-
-            <Button
-                android:id="@+id/button6"
+            <FrameLayout
+                android:id="@+id/frameEnergy"
                 android:layout_width="300dp"
                 android:layout_height="60dp"
+                android:background="@drawable/search_design"
                 android:layout_marginBottom="10dp"
-                android:layout_toEndOf="@id/imageButton6"
-                android:background="#00FFFFFF"
-                android:fontFamily="sans-serif-light"
-                android:text="CAR INFORMATION"
-                android:textColor="@color/white"
-                android:textAlignment="textStart"
-                android:textSize="20dp" />
+                android:layout_centerHorizontal="true"
+                >
+                <ImageButton
+                    android:id="@+id/imageButton6"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@null"
+                    app:tint="@color/white"
+                    android:src="@drawable/energy" />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button6"
+                    android:paddingLeft="70dp"
+                    android:layout_width="300dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/search_design"
+                    android:textColor="@color/white"
+                    android:fontFamily="sans-serif-light"
+                    android:text="CAR MAINTENANCE"
+                    android:textAlignment="textStart"
+                    android:textSize="20dp" />
+            </FrameLayout>
         </RelativeLayout>
 
     </LinearLayout>
