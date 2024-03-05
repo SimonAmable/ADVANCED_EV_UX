@@ -40,17 +40,7 @@ import androidx.core.app.ActivityCompat
 import android.location.Location
 import android.widget.Toast
 import com.google.android.gms.location.LocationServices
-
-
-
-
-
-
-
-
-
-
-
+import com.google.android.gms.maps.model.Marker
 
 
 class Maps : Fragment(), OnMapReadyCallback {
@@ -97,6 +87,7 @@ class Maps : Fragment(), OnMapReadyCallback {
         searchChargeButton = binding.searchChargeButton
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
+        val  chargeMarkerList = mutableListOf<Marker>()
 
 
         val inflater = LayoutInflater.from(context)
@@ -112,15 +103,20 @@ class Maps : Fragment(), OnMapReadyCallback {
         }
         // On search charge button click, display all charging stations nearby - TODO: Set to current location vs preset value
         binding.searchChargeButton.setOnClickListener {
+            // remove any previous charging markers before adding new
+            chargeMarkerList.forEach { it?.remove() }
             getNearbyChargeStations { cordList ->
                 for (coordinate in cordList) {
-                    mMap.addMarker(
+                    val marker = mMap.addMarker(
                         MarkerOptions()
                             .position(coordinate)
                             .title("Charging Station")
                             .icon(BitmapDescriptorFactory.fromBitmap(createBitmapFromView(customMarkerView)))
                     )
-                    // move camera to see ev stations in specified radius from location?
+                    marker?.let {
+                        chargeMarkerList.add(it)
+                    }
+                    // move camera to see ev stations in specified radius from location? may have to track top left and bottom right
                 }
             }
         }
