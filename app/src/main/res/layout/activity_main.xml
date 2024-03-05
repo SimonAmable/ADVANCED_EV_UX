@@ -11,10 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <!--    Box to display the directions time text  -->
-
-
         <FrameLayout
             android:id="@+id/frame_layout"
             android:layout_width="0dp"
@@ -26,6 +22,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"></FrameLayout>
 
+        <!--    Box to display the directions time text  -->
         <TextView
             android:id="@+id/directionTimeDisplay"
             android:layout_width="wrap_content"
@@ -46,7 +43,7 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
-
+        <!-- Bottom Navigation Design Line -->
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
@@ -56,6 +53,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- Bottom Navigation -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             style="@style/Widget.MaterialComponents.BottomNavigationView.PrimarySurface"
@@ -71,61 +69,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_nav"
-
-
-            />
-
-        <Button
-            android:id="@+id/searchButton"
-            android:layout_width="38dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="48dp"
-            android:background="@drawable/transparent_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.855"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/searchButtonIcon"
-            android:layout_width="32dp"
-            android:layout_height="17dp"
-            android:src="@drawable/svg_edited"
-            android:background="#00FFFFFF"
-            app:layout_constraintBottom_toBottomOf="@+id/searchButton"
-            app:layout_constraintEnd_toEndOf="@+id/searchButton"
-            app:layout_constraintStart_toStartOf="@+id/searchButton"
-            app:layout_constraintTop_toTopOf="@+id/searchButton" />
-
-        <EditText
-            android:id="@+id/location"
-            android:layout_width="194dp"
-            android:layout_height="42dp"
-            android:hint="Enter Your Location"
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:backgroundTint="@android:color/white"
-            android:textColorHint="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/destination"
-            android:layout_width="214dp"
-            android:layout_height="49dp"
-            android:layout_marginTop="48dp"
-            android:hint="Enter Your Destination"
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:backgroundTint="@android:color/white"
-            android:textColorHint="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/location" />
+            app:menu="@menu/bottom_nav" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@
     <color name="accent">#009DFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="lightGrey">#d2d6d3</color>
+    <color name="searchbg">#957a7a7a</color>
 
 
 </resources>
